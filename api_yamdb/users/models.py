@@ -20,7 +20,7 @@ ROLE_CHOICES = [
 
 class User(AbstractUser):
     username = models.CharField(
-        validators=(validate_username,),
+        validators=(validate_username, ),
         max_length=150,
         unique=True,
         blank=False,
