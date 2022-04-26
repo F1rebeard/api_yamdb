@@ -7,7 +7,7 @@ router = SimpleRouter()
 router.register(
     prefix='users',
     viewset=views.UserViewSet,
-    basename='users',        
+    basename='users',
 )
 
 urlpatterns = [

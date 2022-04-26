@@ -1,13 +1,11 @@
 from rest_framework import serializers
-from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 
 from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Сериализатор модели пользователя
+    Сериализатор модели пользователя.
     """
     class Meta:
         model = User
@@ -20,23 +18,30 @@ class UserSerializer(serializers.ModelSerializer):
             'role',
         ]
 
+
+class UserInfoUpdateSerializer(UserSerializer):
+    """
+    Сериализатор модели пользователя.
+    Изменения статуса невозможно.
+    """
+    role = serializers.CharField(read_only=True)
+
+
 class SignUpSerializer(serializers.ModelSerializer):
     """
-    Сериализатор данных, необходимых для создания пользователя
+    Сериализатор данных для создания экземляра пользователя.
     """
     class Meta:
         model = User
         fields = ('email', 'username')
 
 
-class GetTokenSerializer(serializers.ModelSerializer):
+class ReceiveTokenSerializer(serializers.ModelSerializer):
     """
-    Сериализатор данных, для авторизации пользователя
+    Сериализатор данных для авторизации пользователя по коду подтверждения
     """
-    username = serializers.CharField(
-        required=True)
-    confirmation_code = serializers.CharField(
-        required=True)
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
 
     class Meta:
         model = User
