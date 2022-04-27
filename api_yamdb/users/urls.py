@@ -15,7 +15,7 @@ urlpatterns = [
     path('auth/signup/', views.APISignUp.as_view()),
     # Эндпоинт для получения JWT-токена
     path('auth/token/', views.APIReceiveToken.as_view()),
-
+    # Эндпоинт для чтения и редактирования персональных атрибутов пользователя
     path('users/me/', views.APIUserInfo.as_view()),
     # Роутер для CRUD-операций с моделью пользователя
     path('', include(router.urls)),
