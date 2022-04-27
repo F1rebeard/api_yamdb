@@ -121,8 +121,8 @@ class APIReceiveToken(views.APIView):
 
     def post(self, request):
         serializer = ReceiveTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
+        if serializer.is_valid(raise_exception=True):
+            data = serializer.validated_data
 
         try:
             user = User.objects.get(username=data['username'])
