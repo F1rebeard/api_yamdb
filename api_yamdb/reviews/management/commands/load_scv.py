@@ -25,12 +25,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for file in options['csv_file']:
-            csv_file = '../static/data/' + file
+            model = CHOICES[file]
+            csv_file = './static/data/' + file + '.csv'
             dataReader = csv.reader(
                 open(csv_file),
-                delimiter='.',
+                delimiter=',',
                 quotechar='|'
             )
             for row in dataReader:
-                model = CHOICES[file]
-                _, created = model.objects.get_or_create(row)
+                if row[0] != 'id':
+                    model.objects.create()
