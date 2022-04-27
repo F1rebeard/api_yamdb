@@ -12,9 +12,11 @@ router.register(
 
 urlpatterns = [
     # Эндпоинт для отправки кода подтверждения регистрации на указанный email
-    path('auth/signup/', views.APISignUp.as_view(), name='signup'),
+    path('auth/signup/', views.APISignUp.as_view()),
     # Эндпоинт для получения JWT-токена
-    path('auth/token/', views.APIReceiveToken.as_view(), name='get_token'),
+    path('auth/token/', views.APIReceiveToken.as_view()),
+
+    path('users/me/', views.APIUserInfo.as_view()),
     # Роутер для CRUD-операций с моделью пользователя
     path('', include(router.urls)),
 ]
