@@ -11,10 +11,10 @@ router.register(
 )
 
 urlpatterns = [
-    # Эндпоинт для отправки кода подтверждения регистрации на указанный email
+    # Эндпоинт для отправки кода подтверждения на указанный email (регистрация)
     path('auth/signup/', views.APISignUp.as_view()),
-    # Эндпоинт для получения JWT-токена
-    path('auth/token/', views.APIReceiveToken.as_view()),
+    # Эндпоинт для получения JWT-токена (аторизация)
+    path('auth/token/', views.APISignIn.as_view()),
     # Эндпоинт для чтения и редактирования персональных атрибутов пользователя
     path('users/me/', views.APIUserInfo.as_view()),
     # Роутер для CRUD-операций с моделью пользователя

@@ -1,9 +1,6 @@
 import os
 from datetime import timedelta
-from dotenv import load_dotenv
 
-
-load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -111,7 +108,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
-# Rest Framework settings
+# Настройки Rest Framework
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -127,6 +124,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+
+# Настройки почтового сервиса
+
 EMAIL_HOST = 'smtp.gmail.com'
 
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -138,5 +138,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_USE_SSL = False
+
+
+# Переопределение модели пользователя
 
 AUTH_USER_MODEL = 'users.User'

@@ -39,7 +39,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
 
 
-class ReceiveTokenSerializer(serializers.ModelSerializer):
+class SignInSerializer(serializers.ModelSerializer):
     """
     Сериализатор данных для авторизации пользователя.
     """

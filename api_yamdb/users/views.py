@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import (
     UserSerializer,
     SignUpSerializer,
-    ReceiveTokenSerializer,
+    SignInSerializer,
     UserInfoUpdateSerializer,
 )
 from .models import User
@@ -36,9 +36,15 @@ class APISignUp(views.APIView):
         ).send()
 
     def post(self, request):
+        # Сериализация полученных от пользователя данных и
+        # полечение из них никнейма и электронной почты
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            # В случае успешной валидации данных в
+            # БД создается экземляр пользователя
             user = serializer.save()
+            # Далее на указанную почту отправляется код
+            # подтверждения, необходимый для авторизации
             message = {
                 'subject': 'Код подтвержения к API_YAMDB',
                 'body': (
@@ -51,7 +57,7 @@ class APISignUp(views.APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class APIReceiveToken(views.APIView):
+class APISignIn(views.APIView):
     """
     Вью-фукнция для получения JWT-токена. Для получения требуется
     предоставить валидные username и confirmation code.
@@ -66,9 +72,9 @@ class APIReceiveToken(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        # Сериализация полученных от пользователя данных и получения
-        # из них кода подтверждения и никнейма пользователя
-        serializer = ReceiveTokenSerializer(data=request.data)
+        # Сериализация полученных от пользователя данных
+        # получения из них кода подтверждения и никнейма пользователя
+        serializer = SignInSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             username = serializer.validated_data.get('username')
             code = serializer.validated_data.get('confirmation_code')
