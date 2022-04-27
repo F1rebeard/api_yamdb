@@ -16,7 +16,7 @@ from .permissions import IsAdmin
 
 class APISignUp(views.APIView):
     """
-    Вью-фукнция для получения запроса на отправку на почту кода подтверждения.
+    Вью-фукнция для получения запроса для отправки на почту кода подтверждения.
     Для получения требуется предоставить валидные email и username.
     Права доступа: неавторизованный пользователь. Пример запроса:
     POST /v1/auth/signup/ HTTP/1.1
@@ -37,11 +37,11 @@ class APISignUp(views.APIView):
 
     def post(self, request):
         # Сериализация полученных от пользователя данных и
-        # полечение из них никнейма и электронной почты
+        # извлечение из них никнейма и электронной почты
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             # В случае успешной валидации данных в
-            # БД создается экземляр пользователя
+            # БД создается экземпляр пользователя
             user = serializer.save()
             # Далее на указанную почту отправляется код
             # подтверждения, необходимый для авторизации
@@ -60,7 +60,7 @@ class APISignUp(views.APIView):
 class APISignIn(views.APIView):
     """
     Вью-фукнция для получения JWT-токена. Для получения требуется
-    предоставить валидные username и confirmation code.
+    предоставить валидные никнейм и код подтверждения пользователя.
     Права доступа: неавторизованный пользователь. Пример  запроса:
 
     POST /v1/auth/token/ HTTP/1.1
@@ -89,6 +89,7 @@ class APISignIn(views.APIView):
 
         # Валидация кода подтверждения присланного пользователем
         if code == user.confirmation_code:
+            # В случае успеха пользователь получает JWT-токен
             token = RefreshToken.for_user(user).access_token
             return Response(
                 {'token': token},
@@ -102,7 +103,7 @@ class APISignIn(views.APIView):
 
 class APIUserInfo(views.APIView):
     """
-    Вью-фукнция для чтения и/или изменения собственных
+    Вью-фукнция для чтения и изменения собственных
     пользовательских атрибутов. Права доступа:
     авторизованный пользователь. Пример запроса:
 
