@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserInfoUpdateSerializer(UserSerializer):
     """
     Сериализатор модели пользователя.
-    Изменения статуса невозможно.
+    Изменения статуса (роли) невозможно.
     """
     role = serializers.CharField(read_only=True)
 
@@ -33,12 +33,15 @@ class SignUpSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ('email', 'username')
+        fields = (
+            'email',
+            'username',
+        )
 
 
 class ReceiveTokenSerializer(serializers.ModelSerializer):
     """
-    Сериализатор данных для авторизации пользователя по коду подтверждения
+    Сериализатор данных для авторизации пользователя.
     """
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
@@ -47,5 +50,5 @@ class ReceiveTokenSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'username',
-            'confirmation_code'
+            'confirmation_code',
         )

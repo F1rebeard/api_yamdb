@@ -3,7 +3,7 @@ import pytest
 from .common import (auth_client, create_reviews, create_titles,
                      create_users_api)
 
-
+@pytest.mark.review
 class Test05ReviewAPI:
 
     @pytest.mark.django_db(transaction=True)
