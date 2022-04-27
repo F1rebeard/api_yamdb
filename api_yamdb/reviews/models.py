@@ -34,19 +34,26 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(
         max_length=150,
-        unique=True,
         blank=False,
         null=False
     )
     year = models.IntegerField()
-    description = models.TextField()
     cathegory = models.ForeignKey(
         Cathegory, related_name='titles',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
+    description = models.TextField()
     genre = models.ManyToManyField(Genre, through='GenreTitle')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'year'],
+                name='unique_title'
+            )
+        ]
 
 
 class GenreTitle(models.Model):
