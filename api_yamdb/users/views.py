@@ -3,6 +3,7 @@ from rest_framework import viewsets, views, permissions, status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.tokens import default_token_generator
 
 from .serializers import (
     UserSerializer,
@@ -43,6 +44,8 @@ class APISignUp(views.APIView):
             # В случае успешной валидации данных в
             # БД создается экземпляр пользователя
             user = serializer.save()
+            # А так же создается персональный код подтверждения
+            default_token_generator.make_token(user)
             # Далее на указанную почту отправляется код
             # подтверждения, необходимый для авторизации
             message = {
@@ -77,7 +80,7 @@ class APISignIn(views.APIView):
         serializer = SignInSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             username = serializer.validated_data.get('username')
-            code = serializer.validated_data.get('confirmation_code')
+            token = serializer.validated_data.get('confirmation_code')
 
         # Поиск пользователя в базе данных
         if not User.objects.filter(username=username).exists():
@@ -87,12 +90,11 @@ class APISignIn(views.APIView):
             )
         user = User.objects.get(username=username)
 
-        # Валидация кода подтверждения присланного пользователем
-        if code == user.confirmation_code:
+        if default_token_generator.check_token(user, token):
             # В случае успеха пользователь получает JWT-токен
             token = RefreshToken.for_user(user).access_token
             return Response(
-                {'token': token},
+                {'token': str(token)},
                 status=status.HTTP_201_CREATED,
             )
         return Response(
