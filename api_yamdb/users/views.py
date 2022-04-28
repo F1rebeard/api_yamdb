@@ -44,8 +44,6 @@ class APISignUp(views.APIView):
             # В случае успешной валидации данных в
             # БД создается экземпляр пользователя
             user = serializer.save()
-            # А так же создается персональный код подтверждения
-            default_token_generator.make_token(user)
             # Далее на указанную почту отправляется код
             # подтверждения, необходимый для авторизации
             message = {
@@ -90,6 +88,7 @@ class APISignIn(views.APIView):
             )
         user = User.objects.get(username=username)
 
+        # Валидация кода подтверждения
         if default_token_generator.check_token(user, token):
             # В случае успеха пользователь получает JWT-токен
             token = RefreshToken.for_user(user).access_token
