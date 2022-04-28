@@ -31,7 +31,6 @@ class Migration(migrations.Migration):
                 ('bio', models.TextField(blank=True, verbose_name='Биография')),
                 ('first_name', models.CharField(blank=True, max_length=150, verbose_name='Имя')),
                 ('last_name', models.CharField(blank=True, max_length=150, verbose_name='Фамилия')),
-                ('confirmation_code', models.CharField(default='foobar', max_length=255, null=True, verbose_name='Код подтверждения')),
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
                 ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
             ],
