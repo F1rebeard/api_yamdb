@@ -3,7 +3,7 @@ from django.db import models
 from .validators import validate_slug
 
 
-class Cathegory(models.Model):
+class Category(models.Model):
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -39,7 +39,7 @@ class Title(models.Model):
     )
     year = models.IntegerField()
     cathegory = models.ForeignKey(
-        Cathegory, related_name='titles',
+        Category, related_name='titles',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,

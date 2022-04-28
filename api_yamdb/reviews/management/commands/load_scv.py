@@ -14,13 +14,13 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from reviews.models import Cathegory, Genre, Title
+from reviews.models import Category, Genre, Title
 from users.models import User
 # Словарь допустимых параметров/названий файла
 # Определяет модель, в которую будем заливать данные
 # Дополнять по добавлению новых моделей
 CHOICES = {
-    'category': Cathegory,
+    'category': Category,
     'genre': Genre,
     'titles': Title,
     'users': User
