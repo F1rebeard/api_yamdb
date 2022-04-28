@@ -9,7 +9,9 @@ python manage.py load_scv *названия файлов, без расшире�
 
 
 import csv
+import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from reviews.models import Cathegory, Genre, Title
@@ -23,6 +25,7 @@ CHOICES = {
     'titles': Title,
     'users': User
 }
+BASE_DIR = settings.BASE_DIR
 
 
 class Command(BaseCommand):
@@ -36,7 +39,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for file in options['csv_file']:
             model = CHOICES[file]
-            csv_file = './static/data/' + file + '.csv'
+            csv_file = os.path.join(BASE_DIR, './static/data/' + file + '.csv')
             dataReader = csv.reader(
                 open(csv_file, encoding='utf-8'),
                 delimiter=',',
