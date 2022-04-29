@@ -145,22 +145,19 @@ class TitleSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     rating = serializers.SerializerMethodField()
     description = serializers.CharField(required=False)
-    genre = GenreSerializer(many=True)
+    genre = GenreSerializer(many=True, read_only=True)
     category = CategorySerializer()
 
     def to_internal_value(self, data):
+        genre_array = Genre.objects.values_list('name', flat=True)
         data_copy = data.copy()
         genre_slugs = data_copy.pop('genre')
         genre_list = []
         genre = ''
         for slug in genre_slugs:
-            try:
+            if slug in genre_array:
                 genre = Genre.objects.get(slug=slug)
                 genre_list.append(genre)
-            except Genre.DoesNotExist:
-                raise serializers.ValidationError(
-                    f'Жанра {genre} нет в базе'
-                )
         data_copy['genre'] = genre_list
         category_slug = data_copy.pop('category')
         try:
