@@ -18,6 +18,8 @@ class User(AbstractUser):
     """
     Новая модель пользователя, унаследованная от AbstractUser. В модели
     присутствуют новые поля, расширяющие исходную Django-модель:
+        confirmation_code - код подтверждения, отсылаемый на email пользователя
+    после регистрации. Необходим для получения JWT-токена (авторизации) (str);
         bio - биография пользователя (str).
         is_user - пользователь с базовыми правами (bool);
         is_moderator - пользователь, обладающий некоторыми правами (bool);
@@ -56,6 +58,14 @@ class User(AbstractUser):
         verbose_name='Фамилия',
         max_length=150,
         blank=True
+    )
+
+    confirmation_code = models.CharField(
+        verbose_name='Код подтверждения',
+        max_length=255,
+        null=True,
+        blank=False,
+        default='foobar'
     )
 
     @property
