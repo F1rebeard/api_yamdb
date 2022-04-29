@@ -20,7 +20,9 @@ class APISignUp(views.APIView):
     Вью-фукнция для получения запроса для отправки на почту кода подтверждения.
     Для получения требуется предоставить валидные email и username.
     Права доступа: неавторизованный пользователь. Пример запроса:
+    
     POST /v1/auth/signup/ HTTP/1.1
+    Content-Type: application/json
     {
         "email": "foo@mail.com",
         "username": "foo"
@@ -65,6 +67,7 @@ class APISignIn(views.APIView):
     Права доступа: неавторизованный пользователь. Пример  запроса:
 
     POST /v1/auth/token/ HTTP/1.1
+    Content-Type: application/json
     {
         "username": "foo",
         "confirmation_code": "bar"
