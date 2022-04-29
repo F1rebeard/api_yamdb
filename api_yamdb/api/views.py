@@ -1,10 +1,10 @@
 from django.core.mail import EmailMessage
-from rest_framework import viewsets, views, permissions, status
+from rest_framework import viewsets, views, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Title, Category, Genre
+from reviews.models import Title, Category, Genre, GenreTitle
 from users.models import User
 from .permissions import IsAdmin
 from .serializers import (
@@ -12,7 +12,7 @@ from .serializers import (
     SignUpSerializer,
     SignInSerializer,
     UserInfoUpdateSerializer,
-    TitleSierializer,
+    TitleSerializer,
     CategorySerializer,
     GenreSerializer,
 )
@@ -152,14 +152,60 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSierializer
+    serializer_class = TitleSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = (
+        'name',
+        'year',
+        'category__slug',
+        'genre__slug'
+    )
+
+    # def get_serializer_class(self):
+    #     if self.action != 'list':
+    #         return TitleCreateChangeSerializer
+    #     return TitleSierializer
+
+    # def create(self, request):
+    #     title_data = request.data
+    #     if "name" not in title_data:
+    #         raise AssertionError('Expected name field')
+    #     category_slug = title_data.get('category')
+    #     category = Category.objects.get(slug=category_slug)
+    #     # title_data['category'] = category
+    #     genres = title_data.get('genre')
+    #     title = Title.objects.create(
+    #         name=title_data["name"],
+    #         year=title_data["year"],
+    #         category=category,
+    #         description=title_data["description"],
+    #     )
+    #     # genre_list = []
+    #     for genre_slug in genres:
+    #         try:
+    #             genre = Genre.objects.get(slug=genre_slug)
+    #             GenreTitle.objects.create(genre=genre, title=title)
+    #         except Exception:  # Category.DoesNotExist:
+    #             print(f'Жанра {genre_slug} в базе нет.')
+    #         # try:
+    #         #     genre = Genre.objects.get(name=genre_name)
+    #         #     genre_list.append(genre)
+    #         # except Exception:  # Category.DoesNotExist:
+    #         #     print('Такого жанра в базе нет.')
+    #     # title_data['genre'] = genre_list
+    #     serializer = TitleSerializer(title)
+    #     return Response(serializer.data)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name',)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name',)

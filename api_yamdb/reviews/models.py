@@ -16,6 +16,9 @@ class Category(models.Model):
         validators=[validate_slug]
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Genre(models.Model):
     name = models.CharField(
@@ -30,6 +33,9 @@ class Genre(models.Model):
         validators=[validate_slug]
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Title(models.Model):
     name = models.CharField(
@@ -38,8 +44,9 @@ class Title(models.Model):
         null=False
     )
     year = models.IntegerField()
-    cathegory = models.ForeignKey(
-        Category, related_name='titles',
+    category = models.ForeignKey(
+        Category,
+        related_name='titles',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -47,15 +54,24 @@ class Title(models.Model):
     description = models.TextField()
     genre = models.ManyToManyField(Genre, through='GenreTitle')
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'year'],
-                name='unique_title'
-            )
-        ]
+    # Хз хачем это, уже не помню зачем написал.
+    # Если не найду смысл этой конструкции - потом удалю
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=['name', 'year'],
+    #             name='unique_title'
+    #         )
+    #     ]
+
+    def __str__(self):
+        return self.name
 
 
 class GenreTitle(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+
+    def __str__(self):
+        str = f'{self.title} : {self.genre}'
+        return str
