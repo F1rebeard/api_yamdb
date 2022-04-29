@@ -3,6 +3,7 @@ from rest_framework import viewsets, views, permissions, status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.tokens import default_token_generator
 
 from .serializers import (
     UserSerializer,
@@ -19,7 +20,9 @@ class APISignUp(views.APIView):
     Вью-фукнция для получения запроса для отправки на почту кода подтверждения.
     Для получения требуется предоставить валидные email и username.
     Права доступа: неавторизованный пользователь. Пример запроса:
+    
     POST /v1/auth/signup/ HTTP/1.1
+    Content-Type: application/json
     {
         "email": "foo@mail.com",
         "username": "foo"
@@ -64,6 +67,7 @@ class APISignIn(views.APIView):
     Права доступа: неавторизованный пользователь. Пример  запроса:
 
     POST /v1/auth/token/ HTTP/1.1
+    Content-Type: application/json
     {
         "username": "foo",
         "confirmation_code": "bar"
@@ -77,7 +81,7 @@ class APISignIn(views.APIView):
         serializer = SignInSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             username = serializer.validated_data.get('username')
-            code = serializer.validated_data.get('confirmation_code')
+            token = serializer.validated_data.get('confirmation_code')
 
         # Поиск пользователя в базе данных
         if not User.objects.filter(username=username).exists():
@@ -87,12 +91,12 @@ class APISignIn(views.APIView):
             )
         user = User.objects.get(username=username)
 
-        # Валидация кода подтверждения присланного пользователем
-        if code == user.confirmation_code:
+        # Валидация кода подтверждения
+        if default_token_generator.check_token(user, token):
             # В случае успеха пользователь получает JWT-токен
             token = RefreshToken.for_user(user).access_token
             return Response(
-                {'token': token},
+                {'token': str(token)},
                 status=status.HTTP_201_CREATED,
             )
         return Response(
@@ -141,6 +145,6 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated, IsAdmin)
+    permission_classes = (IsAdmin, )
     filter_backends = (SearchFilter, )
     search_fields = ('username', )
