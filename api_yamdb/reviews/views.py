@@ -1,6 +1,5 @@
-from rest_framework import viewsets, views, permissions, status, filters
+from rest_framework import viewsets, views, permissions, status, mixins, filters
 from rest_framework.response import Response
-
 from reviews.models import Title, Category, Genre, GenreTitle
 from .serializers import (
     TitleSerializer,
@@ -9,9 +8,19 @@ from .serializers import (
 )
 
 
+class GetPostDelViewSet(
+        mixins.CreateModelMixin,
+        mixins.ListModelMixin,
+        mixins.DestroyModelMixin,
+        viewsets.GenericViewSet
+        ):
+    pass
+
+
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = (filters.SearchFilter, )
     search_fields = (
         'name',
@@ -56,15 +65,17 @@ class TitleViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.data)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(GetPostDelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    http_method_names = ['get', 'post', 'delete']
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name',)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(GetPostDelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    http_method_names = ['get', 'post', 'delete']
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name',)

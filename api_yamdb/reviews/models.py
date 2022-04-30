@@ -1,6 +1,6 @@
 from django.db import models
 
-from .validators import validate_slug
+# from .validators import validate_slug
 
 
 class Category(models.Model):
@@ -10,10 +10,8 @@ class Category(models.Model):
         blank=False,
         null=False
     )
-    slug = models.CharField(
-        max_length=50,
+    slug = models.SlugField(
         unique=True,
-        validators=[validate_slug]
     )
 
     def __str__(self):
@@ -27,10 +25,8 @@ class Genre(models.Model):
         blank=False,
         null=False
     )
-    slug = models.CharField(
-        max_length=50,
+    slug = models.SlugField(
         unique=True,
-        validators=[validate_slug]
     )
 
     def __str__(self):
