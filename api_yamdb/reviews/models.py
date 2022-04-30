@@ -1,6 +1,19 @@
 from django.db import models
 
-# from .validators import validate_slug
+from users.models import User
+
+SCORE = {
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8),
+    (9, 9),
+    (10, 10),
+}
 
 
 class Category(models.Model):
@@ -15,7 +28,11 @@ class Category(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        str = {
+            'title': self.name,
+            'genre': self.slug
+        }
+        return str
 
 
 class Genre(models.Model):
@@ -30,7 +47,11 @@ class Genre(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        str = {
+            'title': self.name,
+            'genre': self.slug
+        }
+        return str
 
 
 class Title(models.Model):
@@ -70,4 +91,24 @@ class GenreTitle(models.Model):
 
     def __str__(self):
         str = f'{self.title} : {self.genre}'
+        return str
+
+
+class Review(models.Model):
+    title_id = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    score = models.IntegerField(default=None, choices=SCORE)
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    def __str__(self):
+        str = f'{self.title_id} : {self.text[:20]}'
         return str

@@ -14,7 +14,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from reviews.models import Category, Genre, Title, GenreTitle
+from reviews.models import Category, Genre, Title, GenreTitle, Review
 from users.models import User
 # Словарь допустимых параметров/названий файла
 # Определяет модель, в которую будем заливать данные
@@ -25,6 +25,7 @@ CHOICES = {
     'titles': Title,
     'genre_title': GenreTitle,
     'users': User,
+    'review': Review
 }
 BASE_DIR = settings.BASE_DIR
 

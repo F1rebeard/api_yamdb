@@ -92,7 +92,7 @@ class APISignIn(views.APIView):
         user = User.objects.get(username=username)
 
         # Валидация кода подтверждения
-        if default_token_generator.check_token(user, token):
+        if user.confirmation_code == token:
             # В случае успеха пользователь получает JWT-токен
             token = RefreshToken.for_user(user).access_token
             return Response(
