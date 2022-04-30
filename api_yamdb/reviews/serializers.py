@@ -14,6 +14,16 @@ class CategorySerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
+    
+    # def to_internal_value(self, data):
+    #     data_copy = data.copy()
+    #     id = data_copy['id']
+    #     category = Category.objects.get(id=id)
+    #     data_copy['id'] = category['slug']
+    #     return super().to_internal_value(data)
+
+    # def destroy(self, validated_data):
+    #     Category.objects.delete(slug=validated_data['id'])
 
 
 class TitleCategorySerializer(serializers.ModelSerializer):
