@@ -31,7 +31,7 @@ class Review(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
-        #только один отзыв на каждое произведение для одного автора
+        # только один отзыв на каждое произведение для одного автора
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
@@ -65,5 +65,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text[:10]
-
-

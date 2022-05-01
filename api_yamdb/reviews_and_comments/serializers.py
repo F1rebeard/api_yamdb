@@ -44,4 +44,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        exclude = ('review',)
+        exclude = ('review_id',)
