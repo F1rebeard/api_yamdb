@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'api',
     'reviews',
+    'reviews_and_comments',
 ]
 
 MIDDLEWARE = [
