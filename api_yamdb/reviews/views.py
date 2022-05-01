@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status, mixins, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
@@ -9,6 +10,13 @@ from .serializers import (
     CategorySerializer,
     GenreSerializer,
 )
+
+
+class TitleSearchFilter(DjangoFilterBackend):
+    def get_search_fields(self, view, request):
+        if request.query_params.get('genre'):
+            return ['genre__slug']
+        return super(TitleSearchFilter, self).get_search_fields(view, request)
 
 
 class GetPostDelViewSet(
@@ -24,7 +32,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
-    filter_backends = (filters.SearchFilter, )
     search_fields = (
         'name',
         'year',
@@ -32,6 +39,8 @@ class TitleViewSet(viewsets.ModelViewSet):
         'genre__slug'
     )
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (TitleSearchFilter,)
+    filterset_fields = ('genre__slug', 'category__slug', 'name', 'year')
 
 
 class CategoryViewSet(GetPostDelViewSet):
