@@ -160,13 +160,6 @@ class TitleSerializer(serializers.ModelSerializer):
     #        GenreTitle.objects.create(genre=genre, title=title)
     #    return title
 
-    # def to_representation(self, instance):
-    #     category_name = instance.category
-    #     # raise ValueError(category_slug)
-    #     category = Category.objects.get(name=category_name)
-    #     instance.category = category
-    #     return super().to_representation(instance)
-
     class Meta:
         model = Title
         fields = (
@@ -183,9 +176,33 @@ class TitleSerializer(serializers.ModelSerializer):
         score = Review.objects.filter(
             title_id=obj.id
         ).aggregate(Avg('score'))
-        if score['score__avg'] == None:
+        if score['score__avg'] is None:
             return None
         return int(score['score__avg'])
+
+    def to_representation(self, instance):
+        data = super(TitleSerializer, self).to_representation(instance)
+        # genres = data.genre
+        genre_list = instance.genre
+        genre = []
+        for obj in genre_list.all():
+            obj_dict = {
+                'name': obj.name,
+                'slug': obj.slug
+            }
+            genre.append(obj_dict)
+        category = instance.category
+        return {
+            "id": data['id'],
+            "name": data['name'],
+            "year": data['year'],
+            "rating": data['rating'],
+            "description": data['description'],
+            "genre": genre,
+            "category": {
+                'name': category.name,
+                'slug': category.slug}
+        }
 
 
 class TitleCreateChangeSerializer(serializers.ModelSerializer):

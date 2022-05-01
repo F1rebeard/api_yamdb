@@ -27,12 +27,8 @@ class Category(models.Model):
         unique=True,
     )
 
-    def __str__(self):
-        str = {
-            'title': self.name,
-            'genre': self.slug
-        }
-        return str
+    # def __str__(self):
+    #     return self.name
 
 
 class Genre(models.Model):
@@ -47,11 +43,7 @@ class Genre(models.Model):
     )
 
     def __str__(self):
-        str = {
-            'title': self.name,
-            'genre': self.slug
-        }
-        return str
+        return self.name
 
 
 class Title(models.Model):
