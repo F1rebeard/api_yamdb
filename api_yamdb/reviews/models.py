@@ -1,6 +1,5 @@
 from django.db import models
 
-from users.models import User
 
 SCORE = {
     (1, 1),
@@ -17,6 +16,7 @@ SCORE = {
 
 
 class Category(models.Model):
+    """Модель категорий тайтлов"""
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -32,6 +32,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
+    """Модель жанров тайтлов"""
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -47,6 +48,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Модель тайтлов"""
     name = models.CharField(
         max_length=150,
         blank=False,
@@ -63,44 +65,15 @@ class Title(models.Model):
     description = models.TextField()
     genre = models.ManyToManyField(Genre, through='GenreTitle')
 
-    # Хз хачем это, уже не помню зачем написал.
-    # Если не найду смысл этой конструкции - потом удалю
-    # class Meta:
-    #     constraints = [
-    #         models.UniqueConstraint(
-    #             fields=['name', 'year'],
-    #             name='unique_title'
-    #         )
-    #     ]
-
     def __str__(self):
         return self.name
 
 
 class GenreTitle(models.Model):
+    """Модель для ManyToMany связи между тайтлами и жанрами"""
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     def __str__(self):
         str = f'{self.title} : {self.genre}'
-        return str
-
-
-class Review(models.Model):
-    title_id = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-    text = models.TextField()
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-    score = models.IntegerField(default=None, choices=SCORE)
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
-
-    def __str__(self):
-        str = f'{self.title_id} : {self.text[:20]}'
         return str

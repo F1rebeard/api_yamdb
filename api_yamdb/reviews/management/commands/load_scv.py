@@ -14,7 +14,8 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from reviews.models import Category, Genre, Title, GenreTitle, Review
+from reviews.models import Category, Genre, Title, GenreTitle
+from reviews_and_comments.models import Review, Comment
 from users.models import User
 # Словарь допустимых параметров/названий файла
 # Определяет модель, в которую будем заливать данные
@@ -25,7 +26,8 @@ CHOICES = {
     'titles': Title,
     'genre_title': GenreTitle,
     'users': User,
-    'review': Review
+    'review': Review,
+    'comments': Comment
 }
 BASE_DIR = settings.BASE_DIR
 
@@ -61,11 +63,11 @@ class Command(BaseCommand):
                     )
                     obj.save()
             else:
-                print(file + ':')
-                for row in dataReader:
-                    print('    ', *row)
-                    obj = model(*row)
-                    try:
+                try:
+                    print(file + ':')
+                    for row in dataReader:
+                        print('    ', *row)
+                        obj = model(*row)
                         obj.save()
-                    except Exception as e:
-                        print(e)
+                except Exception as e:
+                    print(e)

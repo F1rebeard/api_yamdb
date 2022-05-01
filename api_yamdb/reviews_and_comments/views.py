@@ -1,7 +1,10 @@
 from rest_framework import viewsets, permissions
 from django.shortcuts import get_object_or_404
 
-from reviews_and_comments.serializers import ReviewSerializer, CommentSerializer
+from reviews_and_comments.serializers import (
+    ReviewSerializer,
+    CommentSerializer
+)
 from reviews.models import Title
 from reviews_and_comments.models import Review
 from reviews_and_comments.permissions import IsAdminOrModerPermission
