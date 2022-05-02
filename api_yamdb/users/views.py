@@ -3,7 +3,6 @@ from rest_framework import viewsets, views, permissions, status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.tokens import default_token_generator
 
 from .serializers import (
     UserSerializer,
@@ -20,7 +19,6 @@ class APISignUp(views.APIView):
     Вью-фукнция для получения запроса для отправки на почту кода подтверждения.
     Для получения требуется предоставить валидные email и username.
     Права доступа: неавторизованный пользователь. Пример запроса:
-    
     POST /v1/auth/signup/ HTTP/1.1
     Content-Type: application/json
     {

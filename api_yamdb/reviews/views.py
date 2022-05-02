@@ -13,11 +13,11 @@ from .serializers import (
 
 
 class GetPostDelViewSet(
-        mixins.CreateModelMixin,
-        mixins.ListModelMixin,
-        mixins.DestroyModelMixin,
-        viewsets.GenericViewSet
-        ):
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     """
     Кастомный миксин для создания, запроса списка и удаления объектов.
     """
