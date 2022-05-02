@@ -10,7 +10,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="YamDB API",
       default_version='v1',
-      description="Документация для проекта YamDB",
+      description="Документация API для проекта YamDB",
       license=openapi.License(name="BSD License"),
    ),
    public=True,
