@@ -14,7 +14,7 @@ class Review(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name = 'reviews',
+        related_name='reviews',
     )
     title = models.ForeignKey(
         Title,

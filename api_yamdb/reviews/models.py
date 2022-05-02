@@ -85,22 +85,3 @@ class GenreTitle(models.Model):
         str = f'{self.title} : {self.genre}'
         return str
 
-
-class Review(models.Model):
-    title_id = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-    text = models.TextField()
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-    score = models.IntegerField(default=None, choices=SCORE)
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
-
-    def __str__(self):
-        str = f'{self.title_id} : {self.text[:20]}'
-        return str
