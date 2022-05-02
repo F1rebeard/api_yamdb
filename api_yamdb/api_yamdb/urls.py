@@ -8,10 +8,9 @@ from django.conf.urls import url
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Cats API",
+      title="YamDB API",
       default_version='v1',
-      description="Документация для приложения cats проекта Kittygram",
-      contact=openapi.Contact(email="admin@kittygram.ru"),
+      description="Документация для проекта YamDB",
       license=openapi.License(name="BSD License"),
    ),
    public=True,
