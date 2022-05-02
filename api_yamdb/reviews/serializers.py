@@ -32,7 +32,11 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     """
-    Сериализатор модели тайтлов.
+    Сериализатор модели произведений.
+    Year не может быть больше нынешнего года.
+    Rating - среднеарифметическое оценок с дочерних Review.
+    Genre и Category - на входе при создании принимают slug,
+    а на выходе выдают соответствующие объекты.
     """
     rating = serializers.SerializerMethodField()
     description = serializers.CharField(required=False)
@@ -46,60 +50,6 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug'
     )
     year = serializers.IntegerField(validators=[validate_year])
-
-    # def to_internal_value(self, data):
-    #     name = data.get('name')
-    #     if not name:
-    #         raise serializers.ValidationError({
-    #             'name': 'This field is required.'
-    #         })
-    #     year = data.get('year')
-    #     if not year:
-    #         raise serializers.ValidationError({
-    #             'year': 'This field is required.'
-    #         })
-    #     genre = data.get('genre')
-    #     if not genre:
-    #         raise serializers.ValidationError({
-    #             'genre': 'This field is required.'
-    #         })
-    #     category = data.get('category')
-    #     if not category:
-    #         raise serializers.ValidationError({
-    #             'category': 'This field is required.'
-    #         })
-    #     genre_array = Genre.objects.values_list('slug', flat=True)
-    #     data_copy = data.copy()
-    #     genre_list = []
-    #     genre = ''
-    #     genre_slugs = data_copy.pop('genre')
-    #     for slug in genre_slugs:
-    #         if slug in genre_array:
-    #             genre = Genre.objects.get(slug=slug)
-    #             genre_list.append(genre)
-    #         else:
-    #             raise serializers.ValidationError({
-    #                 'genre': f'Genre {slug} is not in DB'
-    #             })
-    #     data_copy['genre'] = genre_list
-    #     category_slug = data_copy.get('category')
-    #     category_array = Category.objects.values_list('slug', flat=True)
-    #     if category_slug in category_array:
-    #         category = Category.objects.get(slug=category_slug)
-    #     else:
-    #         raise serializers.ValidationError({
-    #                 'category': f'category {category_slug} is not in DB'
-    #             })
-    #     data_copy['category'] = category
-    #     return data_copy
-
-    # def create(self, validated_data):
-    #     genre_list = validated_data.pop('genre')
-    #     title = Title.objects.create(**validated_data)
-    #     for genre_name in genre_list:
-    #         genre = Genre.objects.get(name=genre_name)
-    #         GenreTitle.objects.create(genre=genre, title=title)
-    #     return title
 
     class Meta:
         model = Title

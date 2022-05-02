@@ -18,10 +18,16 @@ class GetPostDelViewSet(
         mixins.DestroyModelMixin,
         viewsets.GenericViewSet
         ):
+    """
+    Кастомный миксин для создания, запроса списка и удаления объектов.
+    """
     pass
 
 
 class TitleViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для произведений.
+    """
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
@@ -30,6 +36,9 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(GetPostDelViewSet):
+    """
+    Вьюсет для категорий.
+    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter, )
@@ -42,6 +51,12 @@ class CategoryViewSet(GetPostDelViewSet):
 
 
 class GenreViewSet(GetPostDelViewSet):
+    """
+    Вьюсет для жанров.
+    Поиск по имени.
+    Доступ: пользователи с правами ниже администратора
+    получают доступ только для чтения.
+    """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter, )

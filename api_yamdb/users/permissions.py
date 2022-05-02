@@ -20,7 +20,9 @@ class IsAdmin(permissions.BasePermission):
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     """
-    Custom permission to only allow owners of an object to edit it.
+    Данный Пермишен предоставляет доступ к чтению всем пользователям,
+    а ко всем CRUD операциям c объектом только при наличии
+    у пользователя флага .is_admin или is_superuser
     """
 
     def has_permission(self, request, view):

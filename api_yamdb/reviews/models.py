@@ -16,7 +16,9 @@ SCORE = {
 
 
 class Category(models.Model):
-    """Модель категорий тайтлов"""
+    """
+    Модель категорий произведений.
+    """
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -32,7 +34,9 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    """Модель жанров тайтлов"""
+    """
+    Модель жанров произведений.
+    """
     name = models.CharField(
         max_length=256,
         unique=True,
@@ -48,7 +52,9 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    """Модель тайтлов"""
+    """
+    Модель произведений.
+    """
     name = models.CharField(
         max_length=150,
         blank=False,
@@ -70,7 +76,9 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    """Модель для ManyToMany связи между тайтлами и жанрами"""
+    """
+    Модель для ManyToMany связи между произведенями и жанрами.
+    """
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
