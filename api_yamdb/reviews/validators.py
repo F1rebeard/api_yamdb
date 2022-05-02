@@ -1,8 +1,11 @@
 from django.core.exceptions import ValidationError
-import re
+from datetime import datetime
 
 
-def validate_slug(value):
-    slug = re.compile('^[-a-zA-Z0-9_]+$')
-    if not slug.match(value):
-        raise ValidationError('Поле slug заполнено некорректно.')
+def validate_year(value):
+    year = datetime.now().year
+    if value > year:
+        raise ValidationError(
+            'Нельзя добавлять фильмы из будущего! '
+            'Временная полиция не дремлет.'
+        )

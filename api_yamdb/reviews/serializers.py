@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.db.models import Avg
 
 from .models import Category, Genre, Title
+from .validators import validate_year
 from reviews_and_comments.models import Review
 
 
@@ -44,6 +45,7 @@ class TitleSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
         slug_field='slug'
     )
+    year = serializers.IntegerField(validators=[validate_year])
 
     # def to_internal_value(self, data):
     #     name = data.get('name')
