@@ -1,5 +1,7 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
+from users.models import User
 
 SCORE = {
     (1, 1),
@@ -83,5 +85,42 @@ class GenreTitle(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     def __str__(self):
-        str = f'{self.title} : {self.genre}'
-        return str
+        return f'{self.title} : {self.genre}'
+
+
+class Review(models.Model):
+    """
+    Модель для отзывов к произведенияем.
+    """
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
+    score = models.IntegerField(
+        default=1,
+        validators=[
+            MaxValueValidator(10, 'Максимальная оценка - 10'),
+            MinValueValidator(1, 'Минимальная оценка - 1'),
+        ]
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
+        # только один отзыв на каждое произведение для одного автора
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='unique_review'
+            )
+        ]
+
+    def __str__(self):
+        return self.text[:10]
