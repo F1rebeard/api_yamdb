@@ -34,7 +34,7 @@ class Review(models.Model):
         #только один отзыв на каждое произведение для одного автора
         constraints = [
             models.UniqueConstraint(
-                fields=['author', 'title'],
+                fields=('title', 'author'),
                 name='unique_review'
             )
         ]

@@ -27,11 +27,22 @@ class ReviewSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        if not 1 <= data['score'] <= 10:
+        if self.context['request'].method != 'POST':
+            return data
+        title_id = self.context['view'].kwargs.get('title_id')
+        author = self.context['request'].user
+        if Review.objects.filter(
+            author=author, title=title_id
+        ).exists():
+            raise serializers.ValidationError('jffj')
+        return data
+
+    def validate_score(self, value):
+        if not 1 <= value <= 10:
             raise serializers.ValidationError(
                 'Выберите оценку в диапазоне от 1 до 10.'
             )
-        return data
+        return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
