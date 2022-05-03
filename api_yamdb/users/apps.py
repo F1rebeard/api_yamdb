@@ -6,3 +6,5 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         import users.signals
+        if False:
+            print(users.signals.post_save.__doc__)

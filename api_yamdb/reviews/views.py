@@ -17,7 +17,7 @@ class GetPostDelViewSet(
         mixins.ListModelMixin,
         mixins.DestroyModelMixin,
         viewsets.GenericViewSet
-        ):
+):
     """
     Кастомный миксин для создания, запроса списка и удаления объектов.
     """
