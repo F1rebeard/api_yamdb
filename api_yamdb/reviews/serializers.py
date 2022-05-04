@@ -64,5 +64,8 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class CreateTitleSerializer(TitleSerializer):
+    """
+    Сериализатор модели произведений для создания объектов
+    """
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
