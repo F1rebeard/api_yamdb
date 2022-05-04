@@ -28,7 +28,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
             return CreateTitleSerializer
-        return TitleSerializer
+        return CreateTitleSerializer
 
 
 class CategoryViewSet(GetPostDelViewSet):
