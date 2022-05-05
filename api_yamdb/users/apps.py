@@ -6,4 +6,6 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         import users.signals
-        print(users.signals.post_save.__doc__)
+        #  Мера борьбы с линтером
+        if False:
+            print(users.signals.post_save.__doc__)

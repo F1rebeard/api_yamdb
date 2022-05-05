@@ -1,6 +1,7 @@
 from django.core.mail import EmailMessage
 from rest_framework import viewsets, views, permissions, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -37,25 +38,19 @@ class APISignUp(views.APIView):
         ).send()
 
     def post(self, request):
-        # Сериализация полученных от пользователя данных и
-        # извлечение из них никнейма и электронной почты
         serializer = SignUpSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            # В случае успешной валидации данных в
-            # БД создается экземпляр пользователя
-            user = serializer.save()
-            # Далее на указанную почту отправляется код
-            # подтверждения, необходимый для авторизации
-            message = {
-                'subject': 'Код подтвержения к API_YAMDB',
-                'body': (
-                    'Код доступа к аккаунту '
-                    f'{user.username}: {user.confirmation_code}'
-                ),
-                'address': user.email
-            }
-            self.send_email(message)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        message = {
+            'subject': 'Код подтвержения к API_YAMDB',
+            'body': (
+                'Код доступа к аккаунту '
+                f'{user.username}: {user.confirmation_code}'
+            ),
+            'address': user.email
+        }
+        self.send_email(message)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class APISignIn(views.APIView):
@@ -74,24 +69,17 @@ class APISignIn(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        # Сериализация полученных от пользователя данных
-        # получения из них кода подтверждения и никнейма пользователя
         serializer = SignInSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            username = serializer.validated_data.get('username')
-            token = serializer.validated_data.get('confirmation_code')
-
-        # Поиск пользователя в базе данных
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get('username')
+        token = serializer.validated_data.get('confirmation_code')
         if not User.objects.filter(username=username).exists():
             return Response(
                 {'username': f'"{username}" пользователь не найден'},
                 status=status.HTTP_404_NOT_FOUND,
             )
         user = User.objects.get(username=username)
-
-        # Валидация кода подтверждения
         if user.confirmation_code == token:
-            # В случае успеха пользователь получает JWT-токен
             token = RefreshToken.for_user(user).access_token
             return Response(
                 {'token': str(token)},
@@ -103,10 +91,15 @@ class APISignIn(views.APIView):
         )
 
 
-class APIUserInfo(views.APIView):
+class UserViewSet(viewsets.ModelViewSet):
     """
-    Вью-фукнция для чтения и изменения собственных
-    пользовательских атрибутов. Права доступа:
+    Вьюсет для CRUD-операций с моделями пользователей.
+    Права доступа: администратор. Пример запроса:
+
+    DELETE /v1/users/<username>/ HTTP/1.1
+
+    По url /v1/users/me/ доступно чтение и изменение
+    собственных пользовательских атрибутов. Права доступа:
     авторизованный пользователь. Пример запроса:
 
     PATCH /v1/users/me/ HTTP/1.1
@@ -116,33 +109,25 @@ class APIUserInfo(views.APIView):
         "first_name": "bar"
     }
     """
-    permission_classes = (permissions.IsAuthenticated, )
-
-    def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data)
-
-    def patch(self, request):
-        serializer = UserInfoUpdateSerializer(
-            request.user,
-            data=request.data,
-            partial=True,
-        )
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    Вьюсет для CRUD-операций с моделями пользователей.
-    Права доступа: администратор. Пример запроса:
-
-    DELETE /v1/users/<username>/ HTTP/1.1
-    """
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdmin, )
     filter_backends = (SearchFilter, )
     search_fields = ('username', )
+
+    @action(methods=['GET', 'PATCH'], detail=False, url_path='me',
+            permission_classes=(permissions.IsAuthenticated, ))
+    def user_info(self, request):
+        if request.method == 'GET':
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data)
+        elif request.method == 'PATCH':
+            serializer = UserInfoUpdateSerializer(
+                request.user,
+                data=request.data,
+                partial=True,
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
