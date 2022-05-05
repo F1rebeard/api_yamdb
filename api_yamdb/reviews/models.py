@@ -75,10 +75,10 @@ class Title(models.Model):
         db_index=True
     )
     description = models.TextField(
-        verbose_name='Краткое описание')
+        verbose_name='Краткое описание'
+    )
     genre = models.ManyToManyField(
         Genre,
-        through='GenreTitle',
         verbose_name='Жанры',
         db_index=True
     )
@@ -89,29 +89,6 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-
-
-class GenreTitle(models.Model):
-    """
-    Модель для ManyToMany связи между произведенями и жанрами.
-    """
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name='Произведение'
-    )
-    genre = models.ForeignKey(
-        Genre,
-        on_delete=models.CASCADE,
-        verbose_name='Жанр'
-    )
-
-    def __str__(self):
-        return f'{self.title} : {self.genre}'
-
-    class Meta:
-        verbose_name = 'Связь жанра и произведения'
-        verbose_name_plural = 'Связи жанров и произведений'
 
 
 class Review(models.Model):

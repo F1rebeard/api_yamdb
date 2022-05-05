@@ -1,6 +1,4 @@
-from rest_framework import viewsets, status, filters
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, filters
 
 from users.permissions import IsAdminOrReadOnly
 from .mixins import GetPostDelViewSet
@@ -8,7 +6,6 @@ from .filters import TitleSearchFilter
 from .models import Title, Category, Genre
 from .serializers import (
     TitleSerializer,
-    CreateTitleSerializer,
     CategorySerializer,
     GenreSerializer,
 )
@@ -25,11 +22,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleSearchFilter
 
-    def get_serializer_class(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            return CreateTitleSerializer
-        return CreateTitleSerializer
-
 
 class CategoryViewSet(GetPostDelViewSet):
     """
@@ -40,10 +32,7 @@ class CategoryViewSet(GetPostDelViewSet):
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
-
-    def destroy(self, request, *args, **kwargs):
-        get_object_or_404(Category, slug=kwargs['pk']).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
 
 
 class GenreViewSet(GetPostDelViewSet):
@@ -58,7 +47,4 @@ class GenreViewSet(GetPostDelViewSet):
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
-
-    def destroy(self, request, *args, **kwargs):
-        get_object_or_404(Genre, slug=kwargs['pk']).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'

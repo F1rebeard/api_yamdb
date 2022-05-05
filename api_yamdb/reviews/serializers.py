@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Genre, Title, GenreTitle
+from .models import Category, Genre, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -21,18 +21,12 @@ class GenreSerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 
-class GenreTitleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GenreTitle
-        exclude = ('id',)
-
-
 class TitleSerializer(serializers.ModelSerializer):
     """
     Сериализатор модели произведений.
     Year не может быть больше нынешнего года.
     Rating - среднеарифметическое оценок с дочерних Review.
-    Genre и Category - на входе при создании принимают slug,
+    Genre и Category - на входе при создании/редактировании принимают slug,
     а на выходе выдают соответствующие объекты.
     """
     rating = serializers.IntegerField(
@@ -62,10 +56,8 @@ class TitleSerializer(serializers.ModelSerializer):
             'category',
         )
 
-
-class CreateTitleSerializer(TitleSerializer):
-    """
-    Сериализатор модели произведений для создания объектов
-    """
-    genre = GenreSerializer(many=True)
-    category = CategorySerializer()
+    def to_representation(self, instance):
+        data = super(TitleSerializer, self).to_representation(instance)
+        data['category'] = CategorySerializer(instance.category).data
+        data['genre'] = GenreSerializer(instance.genre.all(), many=True).data
+        return data
