@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from django.db.models import Avg
 
-from .models import Category, Genre, Title, Review
-from .validators import validate_year
+from .models import Category, Genre, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -11,10 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Category
-        fields = (
-            'name',
-            'slug',
-        )
+        exclude = ('id',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -23,10 +18,7 @@ class GenreSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Genre
-        fields = (
-            'name',
-            'slug',
-        )
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -34,10 +26,13 @@ class TitleSerializer(serializers.ModelSerializer):
     Сериализатор модели произведений.
     Year не может быть больше нынешнего года.
     Rating - среднеарифметическое оценок с дочерних Review.
-    Genre и Category - на входе при создании принимают slug,
+    Genre и Category - на входе при создании/редактировании принимают slug,
     а на выходе выдают соответствующие объекты.
     """
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField(
+        default=None,
+        read_only=True
+    )
     description = serializers.CharField(required=False)
     genre = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
@@ -48,7 +43,6 @@ class TitleSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
         slug_field='slug'
     )
-    year = serializers.IntegerField(validators=[validate_year])
 
     class Meta:
         model = Title
@@ -62,33 +56,8 @@ class TitleSerializer(serializers.ModelSerializer):
             'category',
         )
 
-    def get_rating(self, obj):
-        score = Review.objects.filter(
-            title_id=obj.id
-        ).aggregate(Avg('score'))
-        if score['score__avg'] is None:
-            return None
-        return int(score['score__avg'])
-
     def to_representation(self, instance):
         data = super(TitleSerializer, self).to_representation(instance)
-        genre_list = instance.genre
-        genre = []
-        for obj in genre_list.all():
-            obj_dict = {
-                'name': obj.name,
-                'slug': obj.slug
-            }
-            genre.append(obj_dict)
-        category = instance.category
-        return {
-            "id": data['id'],
-            "name": data['name'],
-            "year": data['year'],
-            "rating": data['rating'],
-            "description": data['description'],
-            "genre": genre,
-            "category": {
-                'name': category.name,
-                'slug': category.slug}
-        }
+        data['category'] = CategorySerializer(instance.category).data
+        data['genre'] = GenreSerializer(instance.genre.all(), many=True).data
+        return data

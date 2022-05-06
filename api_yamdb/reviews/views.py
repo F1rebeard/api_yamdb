@@ -1,8 +1,7 @@
-from rest_framework import viewsets, status, mixins, filters
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, filters
 
 from users.permissions import IsAdminOrReadOnly
+from .mixins import GetPostDelViewSet
 from .filters import TitleSearchFilter
 from .models import Title, Category, Genre
 from .serializers import (
@@ -10,25 +9,14 @@ from .serializers import (
     CategorySerializer,
     GenreSerializer,
 )
-
-
-class GetPostDelViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
-):
-    """
-    Кастомный миксин для создания, запроса списка и удаления объектов.
-    """
-    pass
+from django.db.models import Avg
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     """
     Вьюсет для произведений.
     """
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitleSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
     permission_classes = (IsAdminOrReadOnly,)
@@ -44,10 +32,7 @@ class CategoryViewSet(GetPostDelViewSet):
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
-
-    def destroy(self, request, *args, **kwargs):
-        get_object_or_404(Category, slug=kwargs['pk']).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
 
 
 class GenreViewSet(GetPostDelViewSet):
@@ -62,7 +47,4 @@ class GenreViewSet(GetPostDelViewSet):
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
-
-    def destroy(self, request, *args, **kwargs):
-        get_object_or_404(Genre, slug=kwargs['pk']).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'

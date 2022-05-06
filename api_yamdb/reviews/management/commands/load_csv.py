@@ -14,7 +14,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from reviews.models import Category, Genre, Title, GenreTitle
+from reviews.models import Category, Genre, Title
 from reviews_and_comments.models import Review, Comment
 from users.models import User
 # Словарь допустимых параметров/названий файла
@@ -24,7 +24,7 @@ CHOICES = {
     'category': Category,
     'genre': Genre,
     'titles': Title,
-    'genre_title': GenreTitle,
+    'genre_title': 'genre_title',
     'users': User,
     'review': Review,
     'comments': Comment
@@ -62,6 +62,13 @@ class Command(BaseCommand):
                         last_name=row[6]
                     )
                     obj.save()
+            elif model == 'genre_title':
+                print(file + ':')
+                for row in dataReader:
+                    print('    ', *row)
+                    title = Title.objects.get(id=row[1])
+                    genre = Genre.objects.get(id=row[2])
+                    title.genre.add(genre)
             else:
                 try:
                     print(file + ':')
