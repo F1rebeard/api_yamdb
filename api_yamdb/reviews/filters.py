@@ -1,6 +1,5 @@
 """Кастомные фильтры поиска"""
 
-
 from django_filters import rest_framework as filters
 
 from .models import Title
