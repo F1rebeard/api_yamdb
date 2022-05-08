@@ -27,12 +27,14 @@ class User(AbstractUser):
     """
     username = models.CharField(
         validators=(validate_username, ),
+        verbose_name='Имя пользователя',
         max_length=150,
         unique=True,
         blank=False,
         null=False
     )
     email = models.EmailField(
+        verbose_name='Почта',
         max_length=254,
         unique=True,
         blank=False,

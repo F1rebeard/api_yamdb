@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review, Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -65,6 +65,9 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели отзывов.
+    """
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
         slug_field='username',
@@ -107,6 +110,9 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели комментариев.
+    """
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
         slug_field='username',

@@ -2,9 +2,9 @@ from rest_framework import viewsets, filters, permissions
 from django.shortcuts import get_object_or_404
 
 from users.permissions import IsAdminOrReadOnly, IsAdminOrModerPermission
+from reviews.models import Title, Category, Genre, Review
 from .mixins import GetPostDelViewSet
 from .filters import TitleSearchFilter
-from .models import Title, Category, Genre, Review
 from .serializers import (
     TitleSerializer,
     CategorySerializer,
@@ -54,6 +54,9 @@ class GenreViewSet(GetPostDelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для отзывов.
+    """
     serializer_class = ReviewSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -72,6 +75,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для комментариев.
+    """
     serializer_class = CommentSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
