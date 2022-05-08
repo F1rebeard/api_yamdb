@@ -19,13 +19,13 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
-        'review',
+        'review_id',
         'text',
         'author',
         'pub_date',
     )
-    search_fields = ('review',)
-    list_filter = ('review',)
+    search_fields = ('review_id',)
+    list_filter = ('review_id',)
     empty_value_display = '--empty--'
 
 
