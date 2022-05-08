@@ -12,8 +12,8 @@ class Category(models.Model):
     name = models.CharField(
         max_length=256,
         unique=True,
-        verbose_name='Имя',
-        db_index=True
+        db_index=True,
+        verbose_name='Имя'
     )
     slug = models.SlugField(
         unique=True,
@@ -124,7 +124,6 @@ class Review(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
-        # только один отзыв на каждое произведение для одного автора
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
@@ -133,6 +132,38 @@ class Review(models.Model):
         ]
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+
+    def __str__(self):
+        return self.text[:10]
+
+
+class Comment(models.Model):
+    """
+    Модель комментариев к отзывам на произведения.
+    """
+    review_id = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='ID отзыва',
+        db_index=True
+    )
+    text = models.TextField(verbose_name='Текст комментария')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Автор комментария'
+    )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата публикации'
+    )
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
 
     def __str__(self):
         return self.text[:10]

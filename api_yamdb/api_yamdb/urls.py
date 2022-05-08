@@ -18,9 +18,8 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('api/v1/', include('users.urls')),
-    path('api/v1/', include('reviews.urls')),
-    path('api/v1/', include('reviews_and_comments.urls')),
+    path('api/', include('users.urls')),
+    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path(
         'redoc/',
