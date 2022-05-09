@@ -1,5 +1,6 @@
 from rest_framework import viewsets, filters, permissions
 from django.shortcuts import get_object_or_404
+from django.db.models import Avg
 
 from users.permissions import IsAdminOrReadOnly, IsAdminOrModerPermission
 from reviews.models import Title, Category, Genre, Review
@@ -12,7 +13,6 @@ from .serializers import (
     ReviewSerializer,
     CommentSerializer
 )
-from django.db.models import Avg
 
 
 class TitleViewSet(viewsets.ModelViewSet):

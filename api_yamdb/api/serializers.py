@@ -34,7 +34,6 @@ class TitleSerializer(serializers.ModelSerializer):
         default=None,
         read_only=True
     )
-    description = serializers.CharField(required=False)
     genre = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
         slug_field='slug',
