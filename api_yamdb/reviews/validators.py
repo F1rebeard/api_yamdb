@@ -4,7 +4,9 @@ from django.utils import timezone
 
 
 def validate_year(value):
-    """Валидатор года выпуска title"""
+    """
+    Валидатор года выпуска title
+    """
     year = timezone.now().year
     if value > year:
         raise ValidationError(
